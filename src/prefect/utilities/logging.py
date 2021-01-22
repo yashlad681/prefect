@@ -15,7 +15,7 @@ import threading
 import time
 import warnings
 from queue import Empty, Queue
-from typing import Any, List
+from typing import Any, List, Optional
 
 import pendulum
 
@@ -40,14 +40,15 @@ class LogManager:
     """A global log manager for managing all logs to be sent to Prefect"""
 
     def __init__(self) -> None:
-        self.queue = Queue()  # type: Queue[dict]
-        self.pending_logs = []  # type: List[dict]
+        self.queue: Queue[dict] = Queue()
+        self.pending_logs: List[dict] = []
         self.pending_length = 0
         self._stopped = False
+        self.thread: Optional[threading.Thread] = None
 
     def ensure_started(self) -> None:
         """Ensure the log manager is started"""
-        if not hasattr(self, "thread"):
+        if not self.thread:
             self.client = prefect.Client()
             self.logging_period = context.config.cloud.logging_heartbeat
             self.thread = threading.Thread(
@@ -74,7 +75,7 @@ class LogManager:
 
     def stop(self) -> None:
         """Flush all logs and stop the background thread"""
-        if hasattr(self, "thread"):
+        if self.thread:
             self._stopped = True
             self.thread.join()
             self._write_logs()
