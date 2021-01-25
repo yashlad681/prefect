@@ -511,6 +511,11 @@ title = "Twitter Tasks"
 module = "prefect.tasks.twitter"
 classes = ["LoadTweetReplies"]
 
+[pages.tasks.yelp]
+title = "Yelp Tasks"
+module = "prefect.tasks.yelp"
+classes = ["BusinessSearch", "BusinessReviews"]
+
 [pages.agent.agent]
 title = "Agent"
 module = "prefect.agent"
