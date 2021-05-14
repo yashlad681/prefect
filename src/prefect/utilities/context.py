@@ -63,6 +63,8 @@ doc](https://docs.prefect.io/core/concepts/execution.html#context).
 """
 
 import contextlib
+import pendulum
+import json
 import threading
 from typing import Any, Iterator, MutableMapping
 
@@ -104,7 +106,17 @@ class Context(DotDict, threading.local):
         )
 
     def __repr__(self) -> str:
-        return "<Context>"
+        return json.dumps(
+            {
+                k: v
+                for k, v in self.to_dict().items()
+                if not isinstance(v, pendulum.DateTime)
+                and k not in ["config", "secrets"]
+            },
+            indent=2,
+            sort_keys=True,
+            default=lambda x: repr(x),
+        )
 
     @contextlib.contextmanager
     def __call__(self, *args: MutableMapping, **kwargs: Any) -> Iterator["Context"]:

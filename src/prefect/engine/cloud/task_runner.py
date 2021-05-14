@@ -351,6 +351,7 @@ class CloudTaskRunner(TaskRunner):
         """
         context = context or {}
         with prefect.context(context):
+            self.logger.info(f"Prefect context is now: {repr(prefect.context)}")
             end_state = super().run(
                 state=state,
                 upstream_states=upstream_states,

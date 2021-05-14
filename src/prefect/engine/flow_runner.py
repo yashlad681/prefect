@@ -1,3 +1,4 @@
+import json
 from typing import (
     Any,
     Callable,
@@ -270,6 +271,7 @@ class FlowRunner(Runner):
             )
 
             with prefect.context(run_context):
+                self.logger.info(f"Prefect context is now: {repr(prefect.context)}")
                 state = self.check_flow_is_pending_or_running(state)
                 state = self.check_flow_reached_start_time(state)
                 state = self.set_flow_to_running(state)
@@ -772,6 +774,7 @@ def run_task(
             state_handlers=task_runner_state_handlers,
             flow_result=flow_result,
         )
+        task_runner.logger.info(f"Prefect context is now: {repr(prefect.context)}")
         return task_runner.run(
             state=state,
             upstream_states=upstream_states,

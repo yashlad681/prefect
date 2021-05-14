@@ -237,6 +237,7 @@ class TaskRunner(Runner):
 
             # run state transformation pipeline
             with prefect.context(context):
+                self.logger.info(f"Prefect context is now: {repr(prefect.context)}")
 
                 if prefect.context.get("task_loop_count") is None:
                     self.logger.info(

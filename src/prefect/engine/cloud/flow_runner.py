@@ -1,3 +1,4 @@
+import json
 import os
 import signal
 import sys
@@ -363,6 +364,8 @@ class CloudFlowRunner(FlowRunner):
                 `(state, task_states, context, task_contexts)`
         """
 
+        self.logger.info(f"Prefect context is now: {repr(prefect.context)}")
+
         # load id from context
         flow_run_id = prefect.context.get("flow_run_id")
 
@@ -391,6 +394,14 @@ class CloudFlowRunner(FlowRunner):
         )
 
         tasks = {slug: t for t, slug in self.flow.slugs.items()}
+
+        self.logger.info(f"Found {len(flow_run_info.task_runs)} task runs from Cloud")
+        task_ids = {tr.task_id for tr in flow_run_info.task_runs}
+        task_slugs = {tr.task_slug for tr in flow_run_info.task_runs}
+        self.logger.info(
+            f"Found {len(task_ids)} unique task IDs and {len(task_slugs)} unique task slugs from Cloud"
+        )
+
         # update task states and contexts
         for task_run in flow_run_info.task_runs:
 
@@ -414,6 +425,7 @@ class CloudFlowRunner(FlowRunner):
                 task_run_version=task_run.version,
             )
 
+        self.logger.info(f"{len(task_contexts.keys())} task contexts set.")
         # if state is set, keep it; otherwise load from Cloud
         state = state or flow_run_info.state  # type: ignore
 
