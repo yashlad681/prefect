@@ -1,6 +1,7 @@
 import os
 
 from typing import TYPE_CHECKING, Any
+import subprocess
 
 from prefect.client import Secret
 from prefect.storage import Storage
@@ -167,5 +168,6 @@ class Git(Storage):
         Build the git url to clone
         """
         if self.use_ssh:
+            subprocess.run(["ssh-keygen", "-R", self.repo_host])
             return f"git@{self.repo_host}:{self.repo}.git"
         return f"https://{self.git_token_secret}@{self.repo_host}/{self.repo}.git"

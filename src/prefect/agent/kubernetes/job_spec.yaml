@@ -12,7 +12,6 @@ spec:
         - name: flow
           image: prefecthq/prefect:latest
           imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "-c"]
           args: ["prefect execute flow-run"]
           env:
             - name: PREFECT__CLOUD__API
@@ -46,9 +45,15 @@ spec:
             limits:
               cpu: "100m"
           volumeMounts:
-            - name: ""
+            - name: ssh-key
+              readOnly: true
+              mountPath: "/root/.ssh"
       restartPolicy: Never
       imagePullSecrets:
       - name: ""
       volumes:
-        - name: ""
+        - name: ssh-key
+          secret:
+            secretName: my-ssh-key
+            optional: false
+            defaultMode: 0600
