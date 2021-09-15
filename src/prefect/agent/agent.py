@@ -372,8 +372,8 @@ class Agent:
             # - Scheduled - in this case the flow run state will have a start time
             # - Running - in this case the flow run state will not have a start time so we default to now
             flow_run_state = StateSchema().load(flow_run.serialized_state)
-            start_time = getattr(flow_run_state, "start_time", pendulum.now())
-            delay_seconds = max(0, (start_time - pendulum.now()).total_seconds())
+            start_time = getattr(flow_run_state, "start_time", pendulum.now("utc"))
+            delay_seconds = max(0, (start_time - pendulum.now("utc")).total_seconds())
             if delay_seconds:
                 self.logger.debug(
                     f"Waiting {delay_seconds}s to deploy flow run {flow_run.id} on "
