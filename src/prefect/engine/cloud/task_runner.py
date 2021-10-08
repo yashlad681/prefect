@@ -297,7 +297,8 @@ class CloudTaskRunner(TaskRunner):
 
     def set_task_run_name(self, task_inputs: Dict[str, Result]) -> None:
         """
-        Sets the name for this task run by calling the `set_task_run_name` mutation.
+        Sets the name for this task run in the backend by calling the
+        `set_task_run_name` mutation and locally in the context.
 
         Args:
             - task_inputs (Dict[str, Result]): a dictionary of inputs whose keys correspond
@@ -321,6 +322,8 @@ class CloudTaskRunner(TaskRunner):
             self.client.set_task_run_name(
                 task_run_id=self.task_run_id, name=task_run_name  # type: ignore
             )
+
+            prefect.context["task_run_name"] = task_run_name
 
     @tail_recursive
     def run(
