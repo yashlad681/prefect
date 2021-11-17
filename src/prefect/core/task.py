@@ -753,6 +753,13 @@ class Task(metaclass=TaskMetaclass):
                         t=type(arg), preview=repr(arg)[:10]
                     )
                 )
+        for key, val in kwargs.items():
+            if not hasattr(val, "__getitem__") and not isinstance(val, EdgeAnnotation):
+                raise TypeError(
+                    "Cannot map over unsubscriptable object of type {t} at key {k}: {preview}...".format(
+                        t=type(arg), k=repr(key), preview=repr(arg)[:10]
+                    )
+                )
         task_args = task_args.copy() if task_args else {}
         task_args.setdefault("nout", None)
         new = self.copy(**task_args)
