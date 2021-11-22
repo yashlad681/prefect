@@ -398,8 +398,10 @@ def register_serialized_flow(
         set_schedule_active=schedule,
     )
     if not force:
+        flow_json = json.dumps(serialized_flow, sort_keys=True)
+        print(flow_json)
         inputs["idempotency_key"] = hashlib.sha256(
-            json.dumps(serialized_flow, sort_keys=True).encode()
+            flow_json.encode()
         ).hexdigest()
 
     res = client.graphql(
@@ -485,6 +487,7 @@ def build_and_register(
                     force=force,
                     schedule=schedule,
                 )
+
             except Exception as exc:
                 click.secho(" Error", fg="red")
                 log_exception(exc, indent=4)
